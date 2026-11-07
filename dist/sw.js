@@ -1,7 +1,7 @@
 const prefix = 'calculadora-cientifica-dist-';
-const cacheName = prefix + 'v1';
+const cacheName = prefix + 'v2';
 const files = [
-  './index.html', './app.js?v=2', './engine.js', './install.js',
+  './index.html', './app.js?v=3', './engine.js', './install.js',
   './manifest.webmanifest', './icon-192.png', './icon-512.png'
 ];
 
