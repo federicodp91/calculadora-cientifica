@@ -18,7 +18,9 @@ function evaluate() {
     return true;
   } catch (error) {
     result.setAttribute('data-error', '');
-    result.textContent = error.message;
+    result.textContent = error.message === 'Expresión incompleta'
+      ? 'Falta un valor'
+      : error.message;
     done = false;
     return false;
   }
@@ -35,7 +37,25 @@ function positionCursor(start, end) {
   expr.setSelectionRange(start, end);
 }
 
-function insert(v){clearDisplayError();if(hyper&&/^(sin|cos|tan)\($/.test(v)){v=v.replace('(','h(');hyper=false}if(done&&!/^[+*/^!%]|^ nCr /.test(v)){expr.value=''}done=false;let a=expr.selectionStart,b=expr.selectionEnd;expr.value=expr.value.slice(0,a)+v+expr.value.slice(b);positionCursor(a+v.length,a+v.length)}
+function insert(value) {
+  clearDisplayError();
+  if (hyper && /^(sin|cos|tan)\($/.test(value)) {
+    value = value.replace('(', 'h(');
+    hyper = false;
+  }
+  if (done && !/^[+*/^!%]|^ nCr /.test(value)) expr.value = '';
+  done = false;
+
+  let start = expr.selectionStart;
+  const end = expr.selectionEnd;
+  const before = expr.value.slice(0, start);
+  // A second binary operator changes the pending operation. Keep unary minus for negative operands.
+  if (start === end && /^[+*/^]$/.test(value) && /[0-9a-z)!%][+*/^-]$/i.test(before)) {
+    start--;
+  }
+  expr.value = expr.value.slice(0, start) + value + expr.value.slice(end);
+  positionCursor(start + value.length, start + value.length);
+}
 function action(v){if(v==='='){evaluate();return}if(v==='clear'){clearDisplayError();expr.value='';result.textContent='0';done=false}else if(v==='shift')shift=!shift;else if(v==='mode')degree=!degree;else if(v==='hyp')hyper=!hyper;else if(v==='store'){if(evaluate())memory=ans}else if(v==='mplus'||v==='mminus'){if(evaluate())memory+=(v==='mplus'?1:-1)*ans}else if(v==='mclear')memory=0;else if(v==='recall')insert('M');else if(v==='eng'){if(evaluate()){let e=ans===0?0:Math.floor(Math.log10(Math.abs(ans))/3)*3;result.textContent=Number((ans/10**e).toPrecision(9))+'e'+e}}else if(v==='dms'){if(evaluate()){let n=Math.abs(ans),d=Math.floor(n),m=Math.floor((n-d)*60),s=((n-d)*60-m)*60;result.textContent=(ans<0?'-':'')+d+'°'+m+'′'+Number(s.toFixed(3))+'″'}}else if(v==='del'){clearDisplayError();let a=expr.selectionStart,b=expr.selectionEnd;if(a===b)a=Math.max(0,a-1);expr.value=expr.value.slice(0,a)+expr.value.slice(b);positionCursor(a,a);done=false}else if(v==='left'||v==='right'){let p=Math.max(0,Math.min(expr.value.length,expr.selectionStart+(v==='left'?-1:1)));positionCursor(p,p);done=false}else insert(v);render()}
 document.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>action(b.dataset.action));
 expr.addEventListener('input', () => { clearDisplayError(); done = false; });

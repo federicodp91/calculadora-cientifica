@@ -1,12 +1,16 @@
 const prefix = 'calculadora-cientifica-dist-';
-const cacheName = prefix + 'v2';
+const cacheName = prefix + 'v3';
 const files = [
-  './index.html', './app.js?v=3', './engine.js', './install.js',
+  './index.html', './app.js?v=4', './engine.js', './install.js',
   './manifest.webmanifest', './icon-192.png', './icon-512.png'
 ];
 
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(cacheName).then(cache => cache.addAll(files)));
+  event.waitUntil((async () => {
+    const cache = await caches.open(cacheName);
+    await cache.addAll(files.map(path => new Request(new URL(path, self.registration.scope), {cache: 'reload'})));
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', event => {
