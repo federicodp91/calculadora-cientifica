@@ -2,6 +2,10 @@
 
 Calculadora de dos líneas inspirada en una calculadora científica de mano. Funciona en el navegador con el mouse o el teclado.
 
+## Instalar en el celular
+
+Abrí [la calculadora](https://federicodp91.github.io/calculadora-cientifica/dist/) en Chrome para Android. En el menú ⋮ elegí **Agregar a la pantalla principal → Instalar**. En iPhone abrila en Safari y elegí **Compartir → Agregar a inicio**. Después de la primera carga completa podés usarla sin conexión.
+
 ## Abrir en tu computadora
 
 Descargá el repositorio desde **Code → Download ZIP**, descomprimilo y abrí `dist/index.html` con tu navegador. Funciona sin conexión y sin instalar dependencias.
